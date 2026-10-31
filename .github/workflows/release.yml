@@ -1,0 +1,43 @@
+name: Build installer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.go"
+      - "go.mod"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Vet and build Windows exe
+        run: |
+          go vet ./...
+          GOOS=windows GOARCH=amd64 go build -trimpath -o CustomVencordInstaller.exe .
+
+      - name: Publish rolling latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view latest -R MLG-SERBUR/vencord-custom-installer >/dev/null 2>&1; then
+            gh release upload latest --clobber -R MLG-SERBUR/vencord-custom-installer CustomVencordInstaller.exe
+          else
+            gh release create latest -R MLG-SERBUR/vencord-custom-installer \
+              --title "Custom Vencord Installer" \
+              --notes "Windows exe that switches an existing regular Vencord install to the custom build. See README.md." \
+              CustomVencordInstaller.exe
+          fi
