@@ -6,6 +6,33 @@ official Vencord installer, but for this build only.
 Download `CustomVencordInstaller.exe` from the `latest` release in this
 repo, double-click it, confirm, and it does the first apply for you.
 
+## Before you run this: official installer first, then this installer
+
+This is the recommended path, for fresh installs and for repairs, and
+it is also what the installer itself prints when it is run without
+Vencord installed:
+
+1. Install regular Vencord with the official Vencord installer.
+2. Launch Discord once and check Vencord settings appear, so you know
+   the patch works.
+3. Quit Discord, then run this installer. It switches that install to
+   the custom build.
+
+Fresh install and repair install are the same path: official installer
+first, this installer second. If Vencord disappeared after a Discord
+update, that is a repair: run the official installer again, verify
+regular Vencord works, then run this installer again. Do not run this
+installer first on a fresh Discord: it checks for `dist/patcher.js`,
+finds nothing, and exits with the steps above. That is by design, not
+a bug — this installer only replaces dist files, it does not patch
+Discord. Official install/repair does not wipe your Vencord settings,
+themes, or QuickCSS; they live outside the dist folder.
+
+If only the custom build files are broken but the Discord patch is
+intact (Vencord still loads, just the custom build misbehaves), you do
+not need the official step: just rerun this installer, or use
+`--restore <backup folder>` to go back to regular Vencord.
+
 ## Why a separate repo, not the updater repo
 
 The updater repo's root *is* the plugin folder: the builder clones it

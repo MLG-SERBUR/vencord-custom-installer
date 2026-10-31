@@ -239,7 +239,26 @@ func enablePlugins(settingsPath, version string) error {
 	return os.WriteFile(settingsPath, buf.Bytes(), 0o644)
 }
 
+func printRecommendedPath() {
+	fmt.Println("Recommended path (this installer does not patch Discord itself):")
+	fmt.Println("  1. Install regular Vencord with the official Vencord installer.")
+	fmt.Println("  2. Launch Discord once and check Vencord settings appear, so you know the patch works.")
+	fmt.Println("  3. Quit Discord, then run this installer again. It switches that install to the custom build.")
+	fmt.Println("Fresh install and repair install are the same path: official installer first, this installer second.")
+	fmt.Println("If Vencord disappeared after a Discord update, that is a repair: run the official installer again,")
+	fmt.Println("verify regular Vencord works, then run this installer again. Official install/repair does not")
+	fmt.Println("wipe your Vencord settings, themes, or QuickCSS; they live outside the dist folder.")
+}
+
 func main() {
+	flag.Usage = func() {
+		fmt.Println("Custom Vencord Installer: switches an existing regular Vencord install to the custom build.")
+		fmt.Println()
+		printRecommendedPath()
+		fmt.Println()
+		fmt.Println("Flags:")
+		flag.PrintDefaults()
+	}
 	repo := flag.String("repo", "MLG-SERBUR/vencord-customstream-build", "Builder repo, as owner/name")
 	distFlag := flag.String("dist", "", "Vencord dist folder (default: OS default)")
 	settingsFlag := flag.String("settings", "", "Vencord settings.json (default: <dist parent>/settings/settings.json)")
@@ -268,12 +287,16 @@ func main() {
 	// v1 scope gate: regular Vencord must already be installed, so
 	// Discord is already patched to load from this dist folder.
 	if _, err := os.Stat(filepath.Join(distDir, "patcher.js")); err != nil {
-		fmt.Printf("Vencord dist not found at %s.\n", distDir)
-		fmt.Println("This installer switches an existing regular Vencord install to the custom build;")
-		fmt.Println("it does not patch Discord itself. Install regular Vencord once with the")
-		fmt.Println("official Vencord installer, then run this installer again.")
+		fmt.Printf("Vencord not installed (or Discord patch missing): no patcher.js at %s.\n", distDir)
+		fmt.Println("This can mean a fresh install with no Vencord yet, Vencord uninstalled,")
+		fmt.Println("or a Discord update that removed the Vencord patch. In all three cases")
+		fmt.Println("the fix is the same, and running this installer alone will not fix it,")
+		fmt.Println("because this installer only replaces dist files; it does not patch Discord.")
+		fmt.Println()
+		printRecommendedPath()
 		os.Exit(1)
 	}
+	fmt.Printf("Found regular Vencord at %s; switching it to the custom build.\n", distDir)
 
 	waitForDiscordQuit()
 
