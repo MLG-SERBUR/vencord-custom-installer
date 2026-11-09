@@ -65,8 +65,8 @@ keeps them updated afterwards.
    Everything is downloaded before anything is written, so a failed
    download leaves the existing install untouched. A failed write
    restores the backup.
-5. Edits `settings.json` to enable `CustomStream-Preview` and
-   `CustomUpdater`, and sets `CustomUpdater.appliedVersion` to the
+5. Edits `settings.json` to enable `CustomStream-Preview`,
+   `CustomUpdater`, and `VoiceSpectrum`, and sets `CustomUpdater.appliedVersion` to the
    installed version, so the updater does not re-download this build on
    first launch. Other settings are left as-is (the file is rewritten
    with sorted keys; the backup from step 3 covers that).
@@ -74,7 +74,7 @@ keeps them updated afterwards.
    `--no-launch` is given.
 
 After that, CustomUpdater handles future updates on Discord startup:
-click its notification to restart.
+it applies them and restarts automatically, with no notification.
 
 ## Usage
 

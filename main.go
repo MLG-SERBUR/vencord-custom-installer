@@ -228,6 +228,7 @@ func enablePlugins(settingsPath, version string) error {
 	}
 	setPlugin("CustomStream-Preview", map[string]any{"enabled": true})
 	setPlugin("CustomUpdater", map[string]any{"enabled": true, "appliedVersion": version})
+	setPlugin("VoiceSpectrum", map[string]any{"enabled": true})
 
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
@@ -380,13 +381,13 @@ func main() {
 	fmt.Printf("Installed custom Vencord build %s\n", ver.Version)
 
 	if err := enablePlugins(settingsPath, ver.Version); err != nil {
-		fmt.Printf("Warning: could not update settings.json (%v). Enable CustomStream-Preview and CustomUpdater manually in Vencord settings > Plugins.\n", err)
+		fmt.Printf("Warning: could not update settings.json (%v). Enable CustomStream-Preview, CustomUpdater, and VoiceSpectrum manually in Vencord settings > Plugins.\n", err)
 	} else {
-		fmt.Println("Enabled CustomStream-Preview and CustomUpdater, set appliedVersion so the updater does not re-download this build.")
+		fmt.Println("Enabled CustomStream-Preview, CustomUpdater, and VoiceSpectrum, set appliedVersion so the updater does not re-download this build.")
 	}
 
 	if !*noLaunch {
 		launchDiscord()
 	}
-	fmt.Println("Done. Future updates arrive via CustomUpdater on Discord startup: click its notification to restart.")
+	fmt.Println("Done. Future updates arrive via CustomUpdater on Discord startup: it applies them and restarts automatically.")
 }
